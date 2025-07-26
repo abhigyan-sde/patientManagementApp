@@ -115,7 +115,7 @@
     </ng-template>
 
     <div class="action-buttons">
-      <button mat-flat-button color="primary" (click)="goHome()">← Home</button>
+      <button mat-flat-button color="primary" (click)="goBack()">← Back</button>
       <button mat-flat-button color="accent" (click)="toggleEdit()">{{ isEditable ? 'Cancel' : 'Edit' }}</button>
       <button mat-flat-button color="primary" (click)="save()" [disabled]="!isEditable">Save Changes</button>
     </div>

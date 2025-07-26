@@ -313,8 +313,8 @@ export class PatientProfile implements OnInit {
       this.patientForm.disable();
   }
 
-  goHome() {
-    this.router.navigate(['/home']);
+  goBack() {
+    this.router.navigate(['/view-patients']);
   }
 
   openLightbox(images: string[], index: number): void {
