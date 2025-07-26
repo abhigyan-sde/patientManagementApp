@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "CommonJS",
+    "outDir": "./shared",         // ✅ Compile in-place
+    "rootDir": "./shared",
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "strict": true,
+    "resolveJsonModule": true,
+    "noEmitOnError": true
+  },
+  "include": ["shared/**/*.ts"],
+  "exclude": ["node_modules"]
+}
