@@ -74,7 +74,18 @@
 
   <mat-card class="section-card">
     <h2>Prescriptions</h2>
-    <button mat-stroked-button color="primary" (click)="openAddPrescriptionDialog()">+ Add Prescription</button>
+    <div class="prescription-actions">
+      <button mat-stroked-button color="primary" (click)="openAddPrescriptionDialog()">+ Add Prescription</button>
+
+      <mat-form-field appearance="fill" class="date-filter">
+        <mat-label>Filter by Upload Date</mat-label>
+        <input matInput [matDatepicker]="picker" [(ngModel)]="selectedDate" (dateChange)="filterPrescriptions()"
+          placeholder="Choose a date" />
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+    </div>
+
 
     <ng-container *ngIf="prescriptions.length; else noPrescriptions">
       <div *ngFor="let pres of prescriptions" class="prescription-entry">

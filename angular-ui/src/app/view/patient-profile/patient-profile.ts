@@ -1,5 +1,5 @@
 import { Component, computed, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -17,9 +17,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { AddPrescriptionDialog } from '../prescription-upload-dialog/prescription-upload-dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { AppointmentEntity } from '../../entity/appointment';
-import { AppointmentModal } from '../../shared/dialogs/appointment-dialog-modal';
 import { ConfirmDialog } from '../../shared/dialogs/confirm-dialog/confirm-dialog';
 import { RescheduleAppointmentDialog } from '../appointment/reschedule-appointment/reschedule-appointment';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { provideNativeDateAdapter, MatNativeDateModule } from '@angular/material/core';
 
 @Component({
   selector: 'app-patient-profile',
@@ -31,16 +32,16 @@ import { RescheduleAppointmentDialog } from '../appointment/reschedule-appointme
     MatButtonModule,
     MatCardModule,
     RouterModule,
-    MatIconModule
+    MatIconModule,
+    FormsModule,
+    MatDatepickerModule,
+    MatNativeDateModule
   ],
+  providers: [provideNativeDateAdapter()],
   templateUrl: './patient-profile.html',
   styleUrl: './patient-profile.scss'
 })
 export class PatientProfile implements OnInit {
-  //patientIdInput = input.required<string>();
-  // patientId = computed(() => {
-  //   return this.patientIdInput();
-  // })
   patientForm!: FormGroup;
   appointments: any[] = [];
   prescriptions: { date: string, images: { preview: string, path: string }[] }[] = [];
@@ -50,6 +51,8 @@ export class PatientProfile implements OnInit {
   currentImage = '';
   currentIndex = 0;
   lightboxImages: string[] = [];
+  selectedDate: Date | null = null;
+  allPrescriptions: { date: string, images: { preview: string, path: string }[] }[] = [];
 
   private originalData: Partial<Patient> = {};
 
@@ -68,8 +71,7 @@ export class PatientProfile implements OnInit {
     private appointmentService: AppointmentService,
     private route: ActivatedRoute,
     private notification: NotificationService,
-    private dialog: MatDialog,
-    private appointmentDialog: AppointmentModal) {
+    private dialog: MatDialog) {
     this.patientForm = this.fb.group({
       firstName: ['', Validators.required],
       lastName: ['', Validators.required],
@@ -114,20 +116,35 @@ export class PatientProfile implements OnInit {
       const prescriptionsMap = patient.prescriptions as Record<string, string> || {};
       const prescriptions = await Promise.all(Object.entries(prescriptionsMap).map(async ([date, folderPath]) => {
         const images = await this.patientService.loadImageFolderBase64(folderPath); // returns preview + path
-        return { date, images };
+        const localDate = new Date(date);
+        const localDateOnly = new Date(localDate.getFullYear(), localDate.getMonth(), localDate.getDate())
+        .toISOString();
+        return { date: localDateOnly, images };
       }));
 
-      this.prescriptions = prescriptions.sort((a, b) =>
-        new Date(b.date).getTime() - new Date(a.date).getTime()
-      );
-
-      this.prescriptions = prescriptions.sort(
+      this.allPrescriptions = prescriptions.sort(
         (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
       );
+
+      this.prescriptions = [...this.allPrescriptions];
     } catch (error) {
       console.error('Failed to load patient:', error);
       this.notification.showError('Failed to load patient details');
     }
+  }
+
+  filterPrescriptions(): void {
+    if (!this.selectedDate) {
+      this.prescriptions = [...this.allPrescriptions];
+      return;
+    }
+
+    const selected = new Date(this.selectedDate).toISOString().split('T')[0];
+
+    this.prescriptions = this.allPrescriptions.filter(pres => {
+      const presDate = new Date(pres.date).toISOString().split('T')[0];
+      return presDate === selected;
+    });
   }
 
 
@@ -136,21 +153,21 @@ export class PatientProfile implements OnInit {
     today.setHours(0, 0, 0, 0);
 
     this.appointmentService.getAppointmentsByPatientId(patientId).then(appts => {
-    this.appointments = appts
-      .map(a => ({
-        ...a, //Copy all other properties
-        // safe local‑midnight date
-        localDate: (() => {
-          const [y, m, d] = a.appointmentDate.split('-').map(Number);
-          return new Date(y, m - 1, d);       // month is 0‑based
-        })()
-      }))
-      .filter(a => a.localDate >= today)
-      .sort((a, b) => a.localDate.getTime() - b.localDate.getTime());
-  });
+      this.appointments = appts
+        .map(a => ({
+          ...a, //Copy all other properties
+          // safe local‑midnight date
+          localDate: (() => {
+            const [y, m, d] = a.appointmentDate.split('-').map(Number);
+            return new Date(y, m - 1, d);       // month is 0‑based
+          })()
+        }))
+        .filter(a => a.localDate >= today)
+        .sort((a, b) => a.localDate.getTime() - b.localDate.getTime());
+    });
   }
 
-  async deletePrescriptionImageOrFolder(date: string, imageToDelete : string | undefined = undefined): Promise<void> {
+  async deletePrescriptionImageOrFolder(date: string, imageToDelete: string | undefined = undefined): Promise<void> {
     const confirmDelete = this.dialog.open(ConfirmDialog, {
       data: {
         title: 'Confirm Deletion',
@@ -162,7 +179,7 @@ export class PatientProfile implements OnInit {
     confirmDelete.afterClosed().subscribe(confirmed => {
       if (confirmed && imageToDelete) {
         this.deletePrescriptionImage(date, imageToDelete);
-      }else if(confirmed){
+      } else if (confirmed) {
         this.deletePrescription(date);
       }
     });

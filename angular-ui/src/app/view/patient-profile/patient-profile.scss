@@ -221,3 +221,19 @@ h2,
   gap: 16px;
   margin-top: 24px;
 }
+
+.prescription-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap; // responsive fallback
+  margin-bottom: 1rem;
+
+  button {
+    margin-right: 1rem;
+  }
+
+  .date-filter {
+    min-width: 250px;
+  }
+}
