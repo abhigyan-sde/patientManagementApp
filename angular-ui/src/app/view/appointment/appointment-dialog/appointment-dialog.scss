@@ -1,0 +1,11 @@
+@use '../../../shared/styles/shared-dialog.scss' as *;
+
+.time-fields {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+
+  .form-field {
+    flex: 1;
+  }
+}

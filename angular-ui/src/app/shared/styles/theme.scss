@@ -1,0 +1,26 @@
+@use '@angular/material' as mat;
+
+// Define palettes
+$primary: mat.m2-define-palette(mat.$m2-indigo-palette, A400, A100, A700);
+$accent: mat.m2-define-palette(mat.$m2-orange-palette);
+$warn: mat.m2-define-palette(mat.$m2-red-palette);
+
+// Define themes
+$light-theme: mat.m2-define-light-theme((
+  color: (
+    primary: $primary,
+    accent: $accent,
+    warn: $warn,
+  )
+));
+
+$dark-theme: mat.m2-define-dark-theme((
+  color: (
+    primary: $primary,
+    accent: $accent,
+    warn: $warn,
+  )
+));
+
+// Export the themes so they can be used in styles.scss
+@forward '@angular/material' show mat;

@@ -1,0 +1,48 @@
+<h2 mat-dialog-title>Reschedule Appointment</h2>
+
+<mat-dialog-content class="dialog-content">
+  <mat-form-field appearance="outline" class="form-field">
+    <mat-label>New Date</mat-label>
+    <input
+      matInput
+      [matDatepicker]="picker"
+      [(ngModel)]="selectedDate"
+      (dateChange)="fetchAvailableTimes()" />
+    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-datepicker #picker></mat-datepicker>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="form-field">
+    <mat-label>Description</mat-label>
+    <input matInput [(ngModel)]="description" />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="form-field">
+    <mat-label>Start Time</mat-label>
+    <mat-select [(ngModel)]="startTime" (selectionChange)="updateEndTimes()">
+      <mat-option *ngFor="let time of availableStartTimes" [value]="time">
+        {{ time }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="form-field">
+    <mat-label>End Time</mat-label>
+    <mat-select [(ngModel)]="endTime">
+      <mat-option *ngFor="let time of availableEndTimes" [value]="time">
+        {{ time }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="dialog-actions">
+  <button mat-stroked-button (click)="cancel()">Cancel</button>
+  <button
+    mat-flat-button
+    color="primary"
+    (click)="save()"
+    [disabled]="!startTime || !endTime">
+    Save
+  </button>
+</mat-dialog-actions>

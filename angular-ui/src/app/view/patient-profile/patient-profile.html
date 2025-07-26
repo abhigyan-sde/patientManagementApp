@@ -1,0 +1,123 @@
+<div class="profile-container">
+  <mat-card class="section-card">
+    <h2>{{ patientForm.value.firstName }} {{ patientForm.value.lastName }}</h2>
+    <form [formGroup]="patientForm">
+      <div class="row">
+        <mat-form-field appearance="fill" class="half-width">
+          <mat-label>First Name</mat-label>
+          <input matInput formControlName="firstName" />
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="half-width">
+          <mat-label>Last Name</mat-label>
+          <input matInput formControlName="lastName" />
+        </mat-form-field>
+      </div>
+
+      <div class="row">
+        <mat-form-field appearance="fill" class="half-width">
+          <mat-label>Contact Number</mat-label>
+          <input matInput formControlName="contactNumber" />
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="half-width">
+          <mat-label>Email</mat-label>
+          <input matInput formControlName="email" />
+        </mat-form-field>
+      </div>
+
+      <div class="row">
+        <mat-form-field appearance="fill" class="half-width">
+          <mat-label>First Visit Date</mat-label>
+          <input matInput formControlName="firstVisitDate" />
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="half-width">
+          <mat-label>Recent Visit Date</mat-label>
+          <input matInput formControlName="recentVisitDate" />
+        </mat-form-field>
+      </div>
+    </form>
+  </mat-card>
+
+  <mat-card class="section-card">
+    <h2 class="section-title">Upcoming Appointments</h2>
+    <ng-container *ngIf="appointments.length; else noAppointments">
+      <mat-card class="appointment-card" *ngFor="let appt of appointments">
+        <div class="appointment-header">
+          <div class="left">
+            <mat-icon color="primary">event</mat-icon>
+            <span>{{ appt.appointmentDate }}</span>
+          </div>
+          <div class="actions">
+            <button mat-icon-button color="primary" (click)="onEditAppointment(appt)">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" (click)="onDeleteAppointment(appt)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </div>
+        <div class="appointment-body">
+          <div class="time-range">
+            <mat-icon class="clock-icon">schedule</mat-icon>
+            <span>{{ appt.startTime }} - {{ appt.endTime }}</span>
+          </div>
+          <div class="description">{{ appt.description }}</div>
+        </div>
+      </mat-card>
+    </ng-container>
+    <ng-template #noAppointments>
+      <p class="empty-message">No upcoming appointments.</p>
+    </ng-template>
+  </mat-card>
+
+  <mat-card class="section-card">
+    <h2>Prescriptions</h2>
+    <button mat-stroked-button color="primary" (click)="openAddPrescriptionDialog()">+ Add Prescription</button>
+
+    <ng-container *ngIf="prescriptions.length; else noPrescriptions">
+      <div *ngFor="let pres of prescriptions" class="prescription-entry">
+        <header class="prescription-header">
+          <strong>{{ pres.date | date: 'medium' }}</strong>
+          <button mat-button color="warn" (click)="deletePrescriptionImageOrFolder(pres.date)">
+            Delete All
+          </button>
+        </header>
+
+        <section class="prescription-images">
+          <div class="thumbnail-grid">
+            <div *ngFor="let img of pres.images; let i = index" class="thumbnail-wrapper">
+              <img [src]="img.preview" class="thumbnail" (click)="openLightbox(getPreviewImages(pres.images), i)" />
+              <button mat-icon-button color="warn" class="delete-image-btn"
+                (click)="deletePrescriptionImageOrFolder(pres.date, img.path)">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <ng-template [ngIf]="lightboxOpen">
+        <div class="lightbox-backdrop" (click)="closeLightbox()">
+          <div class="lightbox-content" (click)="$event.stopPropagation()">
+            <img [src]="currentImage" alt="Prescription Image" />
+            <button class="nav-button prev" (click)="previousImage()">‹</button>
+            <button class="nav-button next" (click)="nextImage()">›</button>
+            <button class="close-button" (click)="closeLightbox()">×</button>
+          </div>
+        </div>
+      </ng-template>
+    </ng-container>
+
+    <ng-template #noPrescriptions>
+      <p>No prescriptions uploaded.</p>
+    </ng-template>
+
+    <div class="action-buttons">
+      <button mat-flat-button color="primary" (click)="goHome()">← Home</button>
+      <button mat-flat-button color="accent" (click)="toggleEdit()">{{ isEditable ? 'Cancel' : 'Edit' }}</button>
+      <button mat-flat-button color="primary" (click)="save()" [disabled]="!isEditable">Save Changes</button>
+    </div>
+  </mat-card>
+</div>

@@ -1,0 +1,59 @@
+<div class="section-card patient-list">
+  <h2 class="section-title">Patients</h2>
+
+  <div class="search-bar">
+    <mat-form-field appearance="outline" class="search-field">
+      <mat-label>Search by Name</mat-label>
+      <input matInput type="text" [(ngModel)]="searchTerm" (input)="onSearchTermChange($event)" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="page-size-field">
+      <mat-label>Page Size</mat-label>
+      <mat-select [(ngModel)]="pageSize" (selectionChange)="onSearchTermChange($event.value)">
+        <mat-option [value]="10">10</mat-option>
+        <mat-option [value]="20">20</mat-option>
+        <mat-option [value]="50">50</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <table mat-table [dataSource]="patients" class="mat-elevation-z2 patient-table">
+
+    <!-- Last Name Column -->
+    <ng-container matColumnDef="lastName">
+      <th mat-header-cell *matHeaderCellDef> Last Name </th>
+      <td mat-cell *matCellDef="let patient"> {{patient.lastName}} </td>
+    </ng-container>
+
+    <!-- First Name Column -->
+    <ng-container matColumnDef="firstName">
+      <th mat-header-cell *matHeaderCellDef> First Name </th>
+      <td mat-cell *matCellDef="let patient"> {{patient.firstName}} </td>
+    </ng-container>
+
+    <!-- Actions Column -->
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef> Actions </th>
+      <td mat-cell *matCellDef="let patient">
+        <div class="action-buttons">
+          <button mat-icon-button color="primary" aria-label="View" (click)="viewPatient(patient._id)">
+            <mat-icon>visibility</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" aria-label="Delete" (click)="deletePatient(patient._id)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="['lastName', 'firstName', 'actions']"></tr>
+    <tr mat-row *matRowDef="let row; columns: ['lastName', 'firstName', 'actions'];"></tr>
+  </table>
+
+  <div class="pagination" *ngIf="patients.length > pageSize">
+    <button mat-stroked-button color="primary" [disabled]="currentPage === 1" (click)="prevPage()">Previous</button>
+    <span>Page {{ currentPage }} of {{ totalPages }}</span>
+    <button mat-stroked-button color="primary" [disabled]="currentPage === totalPages"
+      (click)="nextPage()">Next</button>
+  </div>
+</div>

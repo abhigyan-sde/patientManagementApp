@@ -1,0 +1,98 @@
+@use './app/shared/styles/theme.scss' as theme;
+@use '@angular/material' as mat;
+@use './app/shared/styles/shared-styles.scss' as *;
+
+@include mat.core(); // ✅ Apply once globally
+
+// ✅ Pass your theme into density/typography/elevation mixins
+@include mat.all-component-densities(theme.$light-theme);
+@include mat.all-component-typographies(theme.$light-theme);
+
+// Apply light theme by default
+html {
+  @include mat.all-component-themes(theme.$light-theme);
+  @include mat.color-variants-backwards-compatibility(theme.$light-theme);
+}
+
+// Apply dark theme when toggled
+html.dark-theme {
+  color-scheme: dark;
+  @include mat.all-component-themes(theme.$dark-theme);
+  @include mat.color-variants-backwards-compatibility(theme.$dark-theme);
+}
+
+// Global Font Import
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+
+// Reset and Global Styles
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  margin:0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  background-color: var(--md-sys-color-background);
+  color: var(--md-sys-color-on-background);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+// Layout Container for Centering Content
+.page-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+// Angular Calendar Styles
+::ng-deep .cal-day-view,
+::ng-deep .cal-week-view,
+::ng-deep .cal-month-view {
+  border: 1px solid var(--md-sys-color-outline);
+  border-radius: 6px;
+  background-color: var(--md-sys-color-surface);
+  box-shadow: 0 1px 4px rgba(0 0 0 / 0.05);
+  padding: 10px;
+}
+
+::ng-deep .cal-hour-segment {
+  border-bottom: 1px solid var(--md-sys-color-outline);
+  border-left: 1px solid var(--md-sys-color-outline);
+  min-height: 40px;
+}
+
+::ng-deep .cal-time-label {
+  padding-right: 10px;
+  font-weight: 500;
+  font-size: 0.9rem;
+  color: var(--md-sys-color-on-surface);
+}
+
+::ng-deep .cal-day-headers {
+  border-bottom: 1px solid var(--md-sys-color-outline);
+}
+
+::ng-deep .cal-day-headers .cal-cell {
+  font-weight: 600;
+  text-align: center;
+  background-color: var(--md-sys-color-surface-variant);
+  border-right: 1px solid var(--md-sys-color-outline);
+  padding: 10px 0;
+}
+
+::ng-deep .cal-hour-rows .cal-cell {
+  border-right: 1px solid var(--md-sys-color-outline);
+}
+
+::ng-deep .cal-event {
+  background-color: var(--md-sys-color-primary) !important;
+  border-radius: 4px !important;
+  padding: 4px 6px !important;
+  font-size: 0.85rem !important;
+  color: var(--md-sys-color-on-primary) !important;
+  border: none !important;
+}
+

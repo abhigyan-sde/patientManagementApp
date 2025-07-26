@@ -1,0 +1,43 @@
+<h2>Upload Prescription</h2>
+
+<form [formGroup]="uploadForm" enctype="multipart/form-data" class="dialog-form">
+
+  <!-- Patient Autocomplete -->
+  <mat-form-field appearance="outline" class="form-field">
+    <mat-label>Select Patient</mat-label>
+    <input
+      type="text"
+      matInput
+      [formControl]="patientSearchControl"
+      [matAutocomplete]="auto"
+      required />
+    <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayPatient.bind(this)">
+      <mat-option *ngFor="let patient of filteredPatients" [value]="patient">
+        {{ patient.firstName }} {{ patient.lastName }}
+      </mat-option>
+    </mat-autocomplete>
+  </mat-form-field>
+
+  <!-- Upload Progress -->
+  <div *ngIf="uploadInProgress" class="progress-container">
+    <div class="progress-bar" [style.width.%]="uploadProgress"></div>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="dialog-actions">
+    <button
+      mat-stroked-button
+      color="primary"
+      [disabled]="!uploadForm.valid"
+      (click)="openAddPrescriptionDialog()">
+      + Add Prescription
+    </button>
+
+    <button
+      mat-stroked-button
+      type="button"
+      (click)="cancel()">
+      Cancel
+    </button>
+  </div>
+</form>

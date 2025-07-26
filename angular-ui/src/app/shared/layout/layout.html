@@ -1,0 +1,23 @@
+<mat-sidenav-container class="sidenav-container">
+  <mat-sidenav #sidenav [mode]="'side'" [opened]="true" class="sidenav" [class.collapsed]="collapsed">
+    <!-- Sidebar content -->
+    <div class="sidebar-header" [class.collapsed]="collapsed">
+      <button mat-icon-button (click)="toggleSidebar()">
+        <mat-icon>{{ collapsed ? 'menu' : 'chevron_left' }}</mat-icon>
+      </button>
+      <span class="app-title">MyApp</span>
+    </div>
+    <mat-nav-list>
+      <a mat-list-item routerLink="/home"><mat-icon>home</mat-icon><span *ngIf="!collapsed">Home</span></a>
+      <a mat-list-item routerLink="/add-patient"><mat-icon>person_add</mat-icon><span *ngIf="!collapsed">Add Patient</span></a>
+      <a mat-list-item routerLink="/view-patients"><mat-icon>groups</mat-icon><span *ngIf="!collapsed">View Patients</span></a>
+      <a mat-list-item routerLink="/appointments"><mat-icon>calendar_month</mat-icon><span *ngIf="!collapsed">Appointments</span></a>
+    </mat-nav-list>
+  </mat-sidenav>
+
+  <mat-sidenav-content class="content-wrapper">
+    <div class="router-wrapper">
+      <router-outlet></router-outlet>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>

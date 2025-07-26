@@ -1,0 +1,79 @@
+@use '../../shared/styles/shared-styles.scss' as *; // If using shared tokens for colors etc.
+
+.section-card.patient-list {
+  width: 100%;
+  max-width: none; // Remove the constraint
+  margin: 24px;
+  padding: 40px 60px 24px 24px;
+  border-radius: 12px;
+  background: var(--md-sys-color-surface);
+  box-shadow: var(--md-elevation-3);
+  color: var(--md-sys-color-on-surface);
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+
+.section-title {
+  font-size: 1.6rem;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: var(--md-sys-color-primary);
+}
+
+.back-button {
+  margin-bottom: 16px;
+  align-self: flex-start;
+}
+
+.search-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 20px;
+
+  .search-field {
+    flex: 2;
+    min-width: 200px;
+  }
+
+  .page-size-field {
+    flex: 1;
+    min-width: 120px;
+  }
+}
+
+.patient-table {
+  width: 100%;
+
+  .mat-header-cell {
+    background-color: var(--md-sys-color-surface-variant);
+    color: var(--md-sys-color-on-surface-variant);
+    font-weight: 600;
+  }
+
+  .mat-cell {
+    color: var(--md-sys-color-on-surface);
+  }
+
+  .action-buttons {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 24px;
+  gap: 16px;
+  color: var(--md-sys-color-on-surface);
+
+  button[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}

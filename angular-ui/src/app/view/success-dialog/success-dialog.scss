@@ -1,0 +1,22 @@
+@use '../../shared/styles/shared-dialog.scss' as *;
+
+.dialog-container {
+  padding: 1.5rem;
+  text-align: center;
+
+  h2 {
+    @extend .dialog-title;
+  }
+
+  p {
+    @extend .dialog-message;
+  }
+
+  .button-wrapper {
+    @extend .centered-buttons;
+  }
+
+  button {
+    @extend .dialog-actions;
+  }
+}

@@ -1,0 +1,13 @@
+@use '../../styles/shared-dialog.scss' as *;
+
+.confirm-dialog-title {
+  @extend .dialog-title;
+}
+
+.dialog-message {
+  @extend .dialog-message;
+}
+
+.dialog-actions {
+  @extend .dialog-actions;
+}

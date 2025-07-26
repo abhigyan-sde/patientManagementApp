@@ -1,0 +1,56 @@
+<div class="form-container">
+  <h2 class="form-title">Add New Patient</h2>
+
+  <form [formGroup]="patientForm" (ngSubmit)="submit()" novalidate>
+    <div class="form-grid">
+
+      <mat-form-field appearance="outline">
+        <mat-label>First Name*</mat-label>
+        <input matInput formControlName="firstName" id="firstName" />
+        <mat-error *ngIf="invalid('firstName')">First Name is required.</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Last Name*</mat-label>
+        <input matInput formControlName="lastName" id="lastName" />
+        <mat-error *ngIf="invalid('lastName')">Last Name is required.</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Contact Number*</mat-label>
+        <input matInput formControlName="contactNumber" id="contactNumber" maxlength="10" />
+        <mat-error *ngIf="invalid('contactNumber')">Must be a 10-digit number.</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Email (Optional)</mat-label>
+        <input matInput type="email" formControlName="email" id="email" />
+        <mat-error *ngIf="invalid('email')">Invalid email.</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>First Visit Date*</mat-label>
+        <input matInput [matDatepicker]="firstVisitPicker" formControlName="firstVisitDate" id="firstVisitDate" />
+        <mat-datepicker-toggle matSuffix [for]="firstVisitPicker"></mat-datepicker-toggle>
+        <mat-datepicker #firstVisitPicker></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Recent Visit Date*</mat-label>
+        <input matInput [matDatepicker]="recentVisitPicker" formControlName="recentVisitDate" id="recentVisitDate" />
+        <mat-datepicker-toggle matSuffix [for]="recentVisitPicker"></mat-datepicker-toggle>
+        <mat-datepicker #recentVisitPicker></mat-datepicker>
+      </mat-form-field>
+
+      <div class="full-width file-upload-group">
+        <label for="prescriptions">Upload Prescription(s)</label>
+        <input id="prescriptions" type="file" (change)="onFileChange($event)" accept="image/*" multiple />
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button mat-raised-button color="primary" type="submit">Add Patient</button>
+      <button mat-stroked-button color="accent" type="button" (click)="cancel()">Cancel</button>
+    </div>
+  </form>
+</div>

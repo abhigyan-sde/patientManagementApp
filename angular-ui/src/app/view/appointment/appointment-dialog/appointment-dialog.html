@@ -1,0 +1,75 @@
+<h2 mat-dialog-title>Book Appointment</h2>
+
+<form [formGroup]="appointmentForm" (ngSubmit)="submit()" class="dialog-form">
+  <mat-form-field appearance="outline" class="form-field">
+    <mat-label>Select Patient</mat-label>
+    <input
+      type="text"
+      matInput
+      [formControl]="patientSearchControl"
+      [matAutocomplete]="auto"
+      required />
+    <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayPatient.bind(this)">
+      <mat-option *ngFor="let patient of filteredPatients" [value]="patient">
+        {{ patient.firstName }} {{ patient.lastName }}
+      </mat-option>
+    </mat-autocomplete>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="form-field">
+    <mat-label>Description</mat-label>
+    <input matInput formControlName="description" />
+  </mat-form-field>
+
+  <div class="time-fields">
+    <mat-form-field appearance="outline" class="form-field">
+      <mat-label>Start Time</mat-label>
+      <mat-select formControlName="startTime">
+        <mat-option *ngFor="let time of availableStartTimes()" [value]="time">
+          {{ time }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="form-field">
+      <mat-label>End Time</mat-label>
+      <mat-select formControlName="endTime">
+        <mat-option *ngFor="let end of availableEndTimes()" [value]="end">
+          {{ end }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <div class="dialog-actions">
+    <button mat-stroked-button type="button" (click)="cancel()">Cancel</button>
+
+    <!-- New Appointment or Existing in Edit Mode -->
+    <button
+      *ngIf="!isExistingAppointment || isEditMode"
+      mat-flat-button
+      color="primary"
+      type="submit"
+      [disabled]="appointmentForm.invalid">
+      Save
+    </button>
+
+    <!-- Existing Appointment in View Mode -->
+    <button
+      *ngIf="isExistingAppointment && !isEditMode"
+      mat-flat-button
+      color="accent"
+      type="button"
+      (click)="enableEdit()">
+      Edit
+    </button>
+
+    <button
+      *ngIf="isExistingAppointment"
+      mat-button
+      color="warn"
+      (click)="delete()">
+      Delete
+    </button>
+  </div>
+</form>

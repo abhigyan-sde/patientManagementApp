@@ -1,0 +1,49 @@
+<div class="appointment-wrapper">
+  <div class="calendar-header">
+    <div class="left-controls">
+      <button mat-icon-button (click)="prev()" color="primary">
+        <mat-icon>chevron_left</mat-icon>
+      </button>
+      <span class="current-period">{{ displayDate }}</span>
+      <button mat-icon-button (click)="next()" color="primary">
+        <mat-icon>chevron_right</mat-icon>
+      </button>
+    </div>
+
+    <mat-form-field appearance="outline" class="view-switcher">
+      <mat-select [value]="view" (selectionChange)="setView($event.value)">
+        <mat-option [value]="CalendarView.Day">Day</mat-option>
+        <mat-option [value]="CalendarView.Week">Week</mat-option>
+        <mat-option [value]="CalendarView.Month">Month</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <ng-template #calendarTemplate>
+    <mwl-calendar-month-view
+      *ngIf="view === CalendarView.Month"
+      [viewDate]="viewDate"
+      [events]="events"
+      (eventClicked)="handleEventClicked($event.event)">
+    </mwl-calendar-month-view>
+
+    <mwl-calendar-week-view
+      *ngIf="view === CalendarView.Week"
+      [viewDate]="viewDate"
+      [weekStartsOn]="1"
+      [events]="events"
+      (eventClicked)="handleEventClicked($event.event)"
+      (hourSegmentClicked)="openBookingDialog($event.date)">
+    </mwl-calendar-week-view>
+
+    <mwl-calendar-day-view
+      *ngIf="view === CalendarView.Day"
+      [viewDate]="viewDate"
+      [events]="events"
+      (eventClicked)="handleEventClicked($event.event)"
+      (hourSegmentClicked)="openBookingDialog($event.date)">
+    </mwl-calendar-day-view>
+  </ng-template>
+
+  <ng-container *ngTemplateOutlet="calendarTemplate"></ng-container>
+</div>

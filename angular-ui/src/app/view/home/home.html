@@ -1,0 +1,78 @@
+<div class="home-container">
+  <h1 class="title">Welcome to Clinic</h1>
+
+  <!-- KPI Cards -->
+  <section class="section kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-value">+12%</div>
+      <div class="kpi-label">Patient Growth Since Last Month</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-value">7.3</div>
+      <div class="kpi-label">Avg. Patients / Day</div>
+    </div>
+  </section>
+
+  <!-- Feature Grid -->
+  <section class="section feature-grid">
+    <div class="feature-card" routerLink="/add-patient">
+      <img src="assets/icons/add-patient.png" alt="Add Patient" />
+      <span>Add Patient</span>
+    </div>
+    <div class="feature-card" routerLink="/view-patients">
+      <img src="assets/icons/view-patients.png" alt="View Patients" />
+      <span>View Patients</span>
+    </div>
+    <div class="feature-card" routerLink="/appointments">
+      <img src="assets/icons/appointments.png" alt="Appointments" />
+      <span>Appointments</span>
+    </div>
+    <div class="feature-card" routerLink="/prescriptions">
+      <img src="assets/icons/prescriptions.png" alt="Prescriptions" />
+      <span>Prescriptions</span>
+    </div>
+  </section>
+
+  <!-- Upcoming Appointments -->
+  <section class="section appointments-section">
+    <h2 class="section-title">Upcoming Appointments (Next 60 Minutes)</h2>
+
+    <div class="appt-table-wrapper">
+      <table mat-table [dataSource]="upcomingAppointments" class="appt-table" matSort>
+
+        <!-- Time Column -->
+        <ng-container matColumnDef="time">
+          <th mat-header-cell *matHeaderCellDef> Appointment Time </th>
+          <td mat-cell *matCellDef="let appt"> {{ appt.startTime }} - {{ appt.endTime }} </td>
+        </ng-container>
+
+        <!-- Name Column -->
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef> Name </th>
+          <td mat-cell *matCellDef="let appt"> {{ appt.patientName }} </td>
+        </ng-container>
+
+        <!-- Description Column -->
+        <ng-container matColumnDef="description">
+          <th mat-header-cell *matHeaderCellDef> Description </th>
+          <td mat-cell *matCellDef="let appt">
+            <span
+              class="description-cell"
+              matTooltip="{{ appt.description }}"
+              matTooltipPosition="above">
+              {{ appt.description | slice: 0:100 }}{{ appt.description.length > 100 ? '…' : '' }}
+            </span>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+      </table>
+    </div>
+
+    <p class="empty-msg" *ngIf="upcomingAppointments.length === 0">
+      No upcoming appointments in the next 60 minutes.
+    </p>
+  </section>
+</div>

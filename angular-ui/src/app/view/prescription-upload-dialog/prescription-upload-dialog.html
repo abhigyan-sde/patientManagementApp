@@ -1,0 +1,16 @@
+<h2 mat-dialog-title>Select Prescription Images</h2>
+
+<mat-dialog-content>
+  <input type="file" (change)="onFileChange($event)" multiple accept="image/*" />
+  <p *ngIf="!files.length">No files selected.</p>
+  <ul *ngIf="files.length">
+    <li *ngFor="let file of files">{{ file.name }}</li>
+  </ul>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cancel()">Cancel</button>
+  <button mat-flat-button color="primary" (click)="upload()" [disabled]="!files.length">
+    Upload
+  </button>
+</mat-dialog-actions>

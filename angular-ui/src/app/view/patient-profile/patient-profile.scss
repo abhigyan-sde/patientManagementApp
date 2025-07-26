@@ -1,0 +1,223 @@
+:host {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden; // prevent host scroll
+}
+
+.profile-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px;
+  background-color: var(--md-sys-color-surface);
+  color: var(--md-sys-color-on-surface);
+  overflow-y: auto;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+mat-card.section-card {
+  width: 100%;
+  max-width: 900px;
+  margin-top: 24px;
+  padding: 20px;
+  border-radius: 12px;
+  background-color: var(--md-sys-color-surface-variant);
+  box-shadow: var(--md-elevation-3);
+}
+
+h2,
+.section-title {
+  margin-bottom: 16px;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--md-sys-color-primary);
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 12px;
+
+  .half-width {
+    flex: 1;
+    min-width: 200px;
+  }
+}
+
+/* Appointment Section */
+.appointments-list,
+.prescription-entry {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.appointment-card {
+  padding: 16px;
+  border-radius: 8px;
+  background-color: var(--md-sys-color-surface);
+  box-shadow: var(--md-elevation-2);
+}
+
+.appointment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+    color: var(--md-sys-color-primary);
+  }
+
+  .actions {
+    display: flex;
+    gap: 4px;
+  }
+}
+
+.appointment-body {
+  margin-left: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  .time-range {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #555;
+  }
+
+  .description {
+    font-size: 14px;
+    color: #333;
+  }
+}
+
+.empty-message {
+  font-style: italic;
+  color: #666;
+}
+
+/* Prescriptions */
+.prescription-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.thumbnail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 16px;
+}
+
+.thumbnail-wrapper {
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: var(--md-sys-color-surface-variant);
+  box-shadow: var(--md-elevation-2);
+
+  .thumbnail {
+    width: 100%;
+    height: auto;
+    display: block;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    border-radius: 4px;
+
+    &:hover {
+      transform: scale(1.05);
+    }
+  }
+
+  .delete-image-btn {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    background-color: var(--md-sys-color-surface);
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--md-sys-color-error);
+    box-shadow: 0 0 2px rgba(0 0 0 / 0.3);
+    transition: background-color 0.2s ease;
+
+    &:hover {
+      background-color: var(--md-sys-color-error-container);
+      color: var(--md-sys-color-on-error-container);
+    }
+  }
+}
+
+/* Lightbox */
+.lightbox-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+
+  .lightbox-content {
+    position: relative;
+    max-width: 90%;
+    max-height: 90%;
+
+    img {
+      max-width: 100%;
+      max-height: 80vh;
+      border-radius: 6px;
+    }
+
+    .nav-button,
+    .close-button {
+      position: absolute;
+      background: none;
+      border: none;
+      color: white;
+      cursor: pointer;
+      font-size: 2rem;
+      user-select: none;
+
+      &.prev {
+        left: -60px;
+        top: 50%;
+        transform: translateY(-50%);
+      }
+
+      &.next {
+        right: -60px;
+        top: 50%;
+        transform: translateY(-50%);
+      }
+
+      &.close-button {
+        top: -40px;
+        right: -40px;
+        font-size: 2.5rem;
+      }
+    }
+  }
+}
+
+.action-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+  margin-top: 24px;
+}

@@ -1,0 +1,90 @@
+// Use this file for shared button styles, layout consistency, and form behavior
+
+:root {
+  // Define custom CSS variable hover colors for light theme
+  --md-sys-color-primary-hover: #303f9f;  // Slightly darker Indigo
+  --md-sys-color-secondary-hover: #f57c00; // Slightly darker Orange
+  
+  --md-sys-color-secondary-container: #d3f198;
+  --md-sys-color-on-secondary-container: #3e2723;
+
+  --md-sys-color-background: #fafafa;
+  --md-sys-color-on-background: #121212;
+
+  --md-sys-color-surface: #ffffff;
+  --md-sys-color-on-surface: #1e1e1e;
+
+  --md-sys-color-outline: #e0e0e0;
+}
+
+html.dark-theme {
+  // Override for dark mode hover behavior
+  --md-sys-color-primary-hover: #5c6bc0;  // Softer for dark background
+  --md-sys-color-secondary-hover: #ffb74d;
+}
+
+// Reusable button style
+.btn {
+  padding: 10px 24px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  font-family: inherit;
+}
+
+.btn-primary {
+  background-color: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary);
+
+  &:hover {
+    background-color: var(--md-sys-color-primary-hover);
+  }
+}
+
+.btn-secondary {
+  background-color: var(--md-sys-color-secondary, #e0e0e0);
+  color: var(--md-sys-color-on-secondary, #333);
+
+  &:hover {
+    background-color: var(--md-sys-color-secondary-hover);
+  }
+}
+
+// Consistent form layout
+.form-group {
+  display: flex;
+  flex-direction: column;
+
+  label {
+    font-weight: 500;
+    margin-bottom: 6px;
+    color: var(--md-sys-color-on-surface, #333);
+  }
+
+  input,
+  select,
+  textarea {
+    padding: 10px 12px;
+    border: 1px solid var(--md-sys-color-outline, #ccc);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    background-color: var(--md-sys-color-surface, white);
+    color: var(--md-sys-color-on-surface, #000);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+
+    &:focus {
+      outline: none;
+      border-color: var(--md-sys-color-primary);
+      box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.2);
+    }
+  }
+
+  .error-message {
+    font-size: 0.8rem;
+    color: var(--md-sys-color-error, #e53935);
+    margin-top: 4px;
+  }
+}
