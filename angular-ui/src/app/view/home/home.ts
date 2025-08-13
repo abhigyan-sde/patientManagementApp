@@ -110,7 +110,7 @@ export class Home implements OnInit, OnDestroy {
           startTime: appt.startTime,
           endTime: appt.endTime,
           description: appt.description ?? '',
-          patientName: `${pat.result.firstName} ${pat.result.lastName}`
+          patientName: `${pat.firstName} ${pat.lastName}`
         });
       }
     }

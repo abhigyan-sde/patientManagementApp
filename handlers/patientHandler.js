@@ -7,8 +7,7 @@ const {wrapAppError} = require('../shared/errorHandler');
 module.exports = function setUpPatientHandlers() {
   ipcMain.handle('add-patient', async (event, patient) => {
     try {
-      const result = await patientRepo.addPatient(patient);
-      return { success: true, id: result };
+      return await patientRepo.addPatient(patient);
     } catch (error) {
       throw wrapAppError(error, Layer.HANDLER, getFunctionName(), 'Error occurred in ipc add-patient handler.');
     }
@@ -17,8 +16,7 @@ module.exports = function setUpPatientHandlers() {
   // Handle fetching all patients
   ipcMain.handle('get-all-patients', async (event, { page, pageSize, filter, projectionFields }) => {
     try {
-      const patients = await patientRepo.getAllPatients(page, pageSize, filter, projectionFields);
-      return { success: true, result: patients };
+      return await patientRepo.getAllPatients(page, pageSize, filter, projectionFields);
     } catch (error) {
       throw wrapAppError(error, Layer.HANDLER, getFunctionName(), 'Error occurred in ipc get-all-patients handler.');
     }
@@ -26,8 +24,7 @@ module.exports = function setUpPatientHandlers() {
 
   ipcMain.handle('get-patient-by-id', async (event, patientId) => {
     try {
-      const patient = await patientRepo.getPatientById(patientId);
-      return { success: true, result: patient };
+      return await patientRepo.getPatientById(patientId);
     } catch (error) {
       throw wrapAppError(error, Layer.HANDLER, getFunctionName(), 'Error occurred in ipc get-patient-by-id handler.');
     }

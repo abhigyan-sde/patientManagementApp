@@ -10,6 +10,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { AppointmentService } from '../../service/appointment.service';
 
 @Component({
   selector: 'app-view-patient',
@@ -36,7 +37,8 @@ export class ViewPatient implements OnInit {
   constructor(
     private router: Router,
     private patientService: PatientService,
-    private notification: NotificationService
+    private notification: NotificationService,
+    private appointmentService: AppointmentService
   ) { }
 
   ngOnInit() {
@@ -47,8 +49,8 @@ export class ViewPatient implements OnInit {
   async loadPatients() {
     try {
       const data = await this.patientService.getAllPatients(this.currentPage, this.pageSize, this.searchTerm);
-      this.patients = data.result.patients;
-      this.totalPatients = data.result.total;
+      this.patients = data.patients;
+      this.totalPatients = data.total;
     } catch (err) {
       console.error('Error loading patients', err);
       this.notification.showError('Error loading patients data');
@@ -96,6 +98,18 @@ export class ViewPatient implements OnInit {
   async deletePatient(id: string) {
     if (confirm('Are you sure you want to delete this patient record?')) {
       try {
+        var patient = await this.patientService.getPatientById(id);
+        //Delete associated prescriptions
+        for(let folderPath of Object.values(patient.prescriptions)){
+          await this.patientService.deletePrescriptionFolder(folderPath);
+        }
+        //Fetch associated appointments
+        var appts = await this.appointmentService.getAppointmentsByPatientId(id);
+        //Delete associated appointments
+        for(const appt of appts){
+          if(appt?._id)
+            await this.appointmentService.deleteAppointment(appt._id);
+        }
         await this.patientService.deletePatient(id);
         this.notification.showSuccess('Patient deleted');
         this.loadPatients();

@@ -93,10 +93,9 @@ export class PatientProfile implements OnInit {
   }
 
 
-
   async loadPatient(id: string): Promise<void> {
     try {
-      const { result: patient } = await this.patientService.getPatientById(id);
+      const patient = await this.patientService.getPatientById(id);
       this.originalData = { ...patient };
 
       console.log('Patient data:', this.originalData);
@@ -243,7 +242,7 @@ export class PatientProfile implements OnInit {
           [date]: folderPath
         };
 
-        const updatePayload: any = { id: this.patientId(), prescriptions: updatedPrescriptions };
+        const updatePayload: any = { _id: this.patientId(), prescriptions: updatedPrescriptions };
         await this.patientService.updatePatient(updatePayload);
 
         // Update local copy
@@ -277,7 +276,7 @@ export class PatientProfile implements OnInit {
       folderPath = await this.patientService.savePrescriptionFile(files, folderTimestamp);
 
       const updatePayload: any = {
-        id: this.patientId(),
+        _id: this.patientId(),
         prescriptions: { ...this.originalData.prescriptions, [date]: folderPath }
       };
 
@@ -299,7 +298,7 @@ export class PatientProfile implements OnInit {
     try {
       if (this.patientForm.valid) {
         const formValue = this.patientForm.value;
-        const updatePayload: any = { id: this.patientId() };
+        const updatePayload: any = { _id: this.patientId() };
 
         this.patientSchema.forEach(field => {
           if (field in formValue && formValue[field] !== this.originalData[field]) {

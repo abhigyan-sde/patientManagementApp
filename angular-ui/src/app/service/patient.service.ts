@@ -7,10 +7,9 @@ import { getFunctionName } from '../../../../shared/util';
 
 @Injectable({ providedIn: 'root' })
 export class PatientService {
-  async addPatient(patient: Patient): Promise<any> {
+  async addPatient(patient: Patient): Promise<string> {
     try {
-      var res = electron.ipcRenderer.invoke('add-patient', patient);
-      return res.id;
+      return electron.ipcRenderer.invoke('add-patient', patient);
     } catch (error) {
       throw wrapAppError(error, Layer.SERVICE, getFunctionName(), 'Failed to add patient');
     }
@@ -27,10 +26,9 @@ export class PatientService {
   }
 
   // Similarly for update / delete / getById
-  async getPatientById(patientId: any): Promise<any> {
+  async getPatientById(patientId: string): Promise<Patient> {
     try {
-      var res = electron.ipcRenderer.invoke('get-patient-by-id', patientId);
-      return res;
+      return electron.ipcRenderer.invoke('get-patient-by-id', patientId);
     } catch (error) {
       throw wrapAppError(error, Layer.SERVICE, getFunctionName(), 'Failed to retrieve patient by Id');
     }
@@ -76,7 +74,6 @@ export class PatientService {
           fileDataBase64: base64String,
           folderPath
         };
-
         await electron.ipcRenderer.invoke('save-prescription-file', data);
       }
       return folderPath;

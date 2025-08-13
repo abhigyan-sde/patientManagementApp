@@ -79,7 +79,7 @@ export class PrescriptionUpload implements OnInit {
 
     this.isLoading = true;
     this.patientService.getAllPatients(this.currentPage, this.pageSize, filter, this.projectedFields).then(data => {
-      const newPatients = data.result.patients || [];
+      const newPatients = data.patients || [];
       this.filteredPatients = [...this.filteredPatients, ...newPatients];
       this.hasMore = newPatients.length === this.pageSize; // if less, no more data
       this.currentPage++;

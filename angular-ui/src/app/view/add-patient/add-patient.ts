@@ -78,7 +78,7 @@ export class AddPatient {
           prescriptions: prescriptions
         };
         const patientId = await this.patientService.addPatient(patient);
-        this.notification.showSuccess('Patient addedd successful');
+        this.notification.showSuccess('Patient added successful');
         this.router.navigate([`/patient/${patientId}`]);
       } catch (err : any) {
         this.notification.showError('Failed to save patient, error msg : ' + err.message + '| detailed error - ' + err.originalError);

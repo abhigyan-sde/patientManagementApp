@@ -115,9 +115,9 @@ export class AppointmentDialog implements OnInit {
 
     if (this.data.patientId) {
       this.patientService.getPatientById(this.data.patientId).then(patient => {
-        const newPatients = patient.result.patients || [];
+        const newPatients = patient || [];
         this.filteredPatients = [newPatients, ...this.filteredPatients];
-        this.patientSearchControl.setValue(patient.result?.firstName + " " + patient.result?.lastName);
+        this.patientSearchControl.setValue(patient.firstName + " " + patient.lastName);
       });
     }
 
@@ -184,7 +184,7 @@ export class AppointmentDialog implements OnInit {
 
     this.isLoading = true;
     this.patientService.getAllPatients(this.currentPage, this.pageSize, filter).then(data => {
-      const newPatients = data.result.patients || [];
+      const newPatients = data.patients || [];
       this.filteredPatients = [...this.filteredPatients, ...newPatients];
       this.hasMore = newPatients.length === this.pageSize; // if less, no more data
       this.currentPage++;
@@ -223,7 +223,7 @@ export class AppointmentDialog implements OnInit {
         description,
         appointmentDate,
         startTime,
-        endTime
+        endTime,
       };
 
       try {

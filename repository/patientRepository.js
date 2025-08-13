@@ -10,11 +10,10 @@ const patientCollection = db.collection(tableName);
 async function addPatient(patient) {
   try {
     const result = await patientCollection.insertOne(patient);
-    return result.insertedId;
+    return result.insertedId.toString();
   } catch (error) {
     throw wrapAppError(error, Layer.REPOSITORY, addPatient.name, 'Failed to add patient');
   }
-
 }
 
 async function getAllPatients(page = 0, pageSize = 10,
@@ -71,12 +70,14 @@ async function getPatientById(id) {
 
 async function updatePatient(patientUpdate) {
   try {
-    if (!ObjectId.isValid(patientUpdate.id)) {
-      throw new Error('Invalid ObjectId provided : ' + patientUpdate.id);
+    if (!ObjectId.isValid(patientUpdate._id)) {
+      throw new Error('Invalid ObjectId provided : ' + patientUpdate._id);
     }
     const db = getDb();
+    const id = patientUpdate._id;
+    delete patientUpdate._id;
     result = await patientCollection.updateOne(
-      { _id: ObjectId.createFromHexString(patientUpdate.id) },
+      { _id: ObjectId.createFromHexString(id) },
       { $set: patientUpdate }
     );
 
