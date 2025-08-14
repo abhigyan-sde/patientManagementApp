@@ -90,7 +90,7 @@
     <ng-container *ngIf="prescriptions.length; else noPrescriptions">
       <div *ngFor="let pres of prescriptions" class="prescription-entry">
         <header class="prescription-header">
-          <strong>{{ pres.date | date: 'medium' }}</strong>
+          <strong>{{ pres.date | date: 'mediumDate' }}</strong>
           <button mat-button color="warn" (click)="deletePrescriptionImageOrFolder(pres.date)">
             Delete All
           </button>
