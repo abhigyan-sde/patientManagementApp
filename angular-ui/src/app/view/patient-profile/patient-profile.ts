@@ -12,7 +12,7 @@ import { Patient } from '../../entity/patient';
 import { ActivatedRoute } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
-import { NotificationService } from '../../shared/dialogs/notification';
+import { NotificationService } from '../../service/notification.service';
 import { MatDialog } from '@angular/material/dialog';
 import { AddPrescriptionDialog } from '../prescription-upload-dialog/prescription-upload-dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -21,6 +21,7 @@ import { ConfirmDialog } from '../../shared/dialogs/confirm-dialog/confirm-dialo
 import { RescheduleAppointmentDialog } from '../appointment/reschedule-appointment/reschedule-appointment';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { provideNativeDateAdapter, MatNativeDateModule } from '@angular/material/core';
+import { PrescriptionUploadService } from '../../service/prescriptionUpload.service';
 
 @Component({
   selector: 'app-patient-profile',
@@ -71,7 +72,8 @@ export class PatientProfile implements OnInit {
     private appointmentService: AppointmentService,
     private route: ActivatedRoute,
     private notification: NotificationService,
-    private dialog: MatDialog) {
+    private dialog: MatDialog,
+    private prescriptionUploadService: PrescriptionUploadService) {
     this.patientForm = this.fb.group({
       firstName: ['', Validators.required],
       lastName: ['', Validators.required],
@@ -117,7 +119,7 @@ export class PatientProfile implements OnInit {
         const images = await this.patientService.loadImageFolderBase64(folderPath); // returns preview + path
         const localDate = new Date(date);
         const localDateOnly = new Date(localDate.getFullYear(), localDate.getMonth(), localDate.getDate())
-        .toISOString();
+          .toISOString().split('T')[0];
         return { date: localDateOnly, images };
       }));
 
@@ -267,28 +269,21 @@ export class PatientProfile implements OnInit {
 
 
   async addPrescription(files: File[]): Promise<void> {
-    if (!files?.length) return;
-
     let folderPath: string | undefined;
+    const date = new Date().toISOString().split('T')[0];
     try {
-      const date = new Date().toISOString();
-      const folderTimestamp = date.replace(/[:.]/g, '-');
-      folderPath = await this.patientService.savePrescriptionFile(files, folderTimestamp);
-
-      const updatePayload: any = {
-        _id: this.patientId(),
-        prescriptions: { ...this.originalData.prescriptions, [date]: folderPath }
-      };
-
-      await this.patientService.updatePatient(updatePayload);
-
-      const images = await this.patientService.loadImageFolderBase64(folderPath);
-      this.prescriptions.unshift({ date, images });
-      this.originalData.prescriptions = { ...updatePayload.prescriptions };
-
-      this.notification.showSuccess('Added prescription');
+      folderPath = await this.prescriptionUploadService.uploadPrescription(files, this.patientId(), date,
+        this.originalData.prescriptions);
+      let images: any;
+      if (folderPath) {
+        this.originalData.prescriptions = {
+          ...(this.originalData.prescriptions ?? {}),
+          [date]: folderPath
+        };
+        images = await this.patientService.loadImageFolderBase64(folderPath);
+        this.prescriptions.unshift({ date, images });
+      }
     } catch (error: any) {
-      console.error('Add prescription failed:', error.message);
       if (folderPath) await this.patientService.deletePrescriptionFolder(folderPath);
       this.notification.showError('Failed to add prescription: ' + error.message);
     }

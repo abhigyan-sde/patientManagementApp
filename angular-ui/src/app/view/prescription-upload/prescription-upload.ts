@@ -11,7 +11,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { Patient } from '../../entity/patient';
 import { debounceTime, distinctUntilChanged, delay } from 'rxjs/operators';
 import { AddPrescriptionDialog } from '../prescription-upload-dialog/prescription-upload-dialog';
-import { NotificationService } from '../../shared/dialogs/notification';
+import { NotificationService } from '../../service/notification.service';
+import { PrescriptionUploadService } from '../../service/prescriptionUpload.service';
 
 @Component({
   selector: 'app-prescription-upload',
@@ -42,7 +43,7 @@ export class PrescriptionUpload implements OnInit {
 
   constructor(private fb: FormBuilder, private dialog: MatDialog,
     private router: Router, private patientService: PatientService,
-    private notification: NotificationService) { }
+    private notification: NotificationService, private prescriptionUploadService : PrescriptionUploadService) { }
 
   ngOnInit(): void {
     this.uploadForm = this.fb.group({
@@ -114,37 +115,21 @@ export class PrescriptionUpload implements OnInit {
 
     let folderPath: string | undefined;
     try {
-      const date = new Date().toISOString();
-      const folderTimestamp = date.replace(/[:.]/g, '-');
       const patientId = this.uploadForm.get('patientId')?.value;
       const selectedPatient = this.filteredPatients.find(p => p._id === patientId);
       const existingPrescriptions = selectedPatient?.prescriptions || {};
-
+      const date = new Date().toISOString().split('T')[0];
       this.uploadProgress = 20;
       delay(300);
-
-      folderPath = await this.patientService.savePrescriptionFile(files, folderTimestamp);
-
-      this.uploadProgress = 50;
-      delay(300);
-
-      const updatePayload: any = {
-        id: patientId,
-        prescriptions: {
-          ...existingPrescriptions,
-          [date]: folderPath
-        }
-      };
-      await this.patientService.updatePatient(updatePayload);
       this.uploadProgress = 80;
       delay(200);
+      await this.prescriptionUploadService.uploadPrescription(files, patientId, date, existingPrescriptions);
 
       this.uploadProgress = 100;
       this.uploadInProgress = false;
       this.uploadForm.reset();
       this.selectedFiles = [];
       this.fileNames = [];
-      this.notification.showSuccess('Added prescription');
     } catch (error: any) {
       console.error('Add prescription failed:', error.message);
       if (folderPath)

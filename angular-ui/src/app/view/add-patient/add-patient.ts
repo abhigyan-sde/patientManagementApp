@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { Router, RouterModule } from '@angular/router';
 import { PatientService } from '../../service/patient.service';
 import { Patient } from '../../entity/patient';
-import { NotificationService } from '../../shared/dialogs/notification';
+import { NotificationService } from '../../service/notification.service';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatDatepickerModule } from '@angular/material/datepicker';

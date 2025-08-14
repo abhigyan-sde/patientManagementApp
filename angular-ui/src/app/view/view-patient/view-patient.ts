@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { PatientService } from '../../service/patient.service';
-import { NotificationService } from '../../shared/dialogs/notification';
+import { NotificationService } from '../../service/notification.service';
 import { MatTableModule } from '@angular/material/table';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
