@@ -5,6 +5,8 @@ let db;
 
 const mongoUri = 'mongodb://127.0.0.1:27017';
 const DB_NAME = 'patient_management';
+const MAX_RETRIES = 5;
+const RETRY_DELAY_MS = 1000; // 1 second
 
 async function connectToMongoDB() {
   try {
@@ -13,22 +15,34 @@ async function connectToMongoDB() {
       await client.connect();
       console.log('✅ MongoDB connected');
     }
+    if (!db) {
+      db = client.db(DB_NAME);
+      console.log('✅ DB instance loaded.');
+    }
   } catch (error) {
     throw Error('Cannot connect to mongoDB server : ' + error);
   }
 
 }
 
-function getDb() {
-  try {
-    if (!db) {
-      db = client.db(DB_NAME);
-      console.log('✅ DB instance loaded.');
+async function getDb() {
+  let retries = 0;
+
+  while ((!client || !db) && retries < MAX_RETRIES) {
+    try {
+      await connectToMongoDB();
+    } catch (error) {
+      retries++;
+      console.warn(`⚠️ MongoDB connection failed (attempt ${retries}/${MAX_RETRIES}). Retrying in ${RETRY_DELAY_MS}ms...`);
+      await new Promise(res => setTimeout(res, RETRY_DELAY_MS));
     }
-    return db;
-  } catch (error) {
-    throw Error('Error occurred while getting db instance : ' + error);
   }
+
+  if (!db) {
+    throw new Error(`❌ Could not connect to MongoDB after ${MAX_RETRIES} retries`);
+  }
+
+  return db;
 }
 
 async function closeMongoDB() {

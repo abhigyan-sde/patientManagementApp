@@ -4,11 +4,22 @@ const { getDb } = require('./mongoService');
 const { ObjectId } = require('mongodb');
 
 tableName = 'patients';
-const db = getDb();
-const patientCollection = db.collection(tableName);
+let patientCollection;
+
+async function init() {
+  try{
+    if (!patientCollection) {
+    const db = await getDb();
+    patientCollection = db.collection(tableName);
+  }
+  }catch(error){
+    throw wrapAppError(error, Layer.REPOSITORY, init.name, 'Failed to intitialize DB');
+  }
+}
 
 async function addPatient(patient) {
   try {
+    await init();
     const result = await patientCollection.insertOne(patient);
     return result.insertedId.toString();
   } catch (error) {
@@ -19,7 +30,7 @@ async function addPatient(patient) {
 async function getAllPatients(page = 0, pageSize = 10,
    filter = '', projectionFields = ['firstName', 'lastName']) {
   try {
-    const db = getDb();
+    await init();
     const query = filter ? {
       $or: [
         { firstName: { $regex: filter, $options: 'i' } },
@@ -61,6 +72,7 @@ async function getPatientById(id) {
     if (!ObjectId.isValid(id)) {
       throw new Error('Invalid ObjectId provided : ' + id);
     }
+    await init();
     const _id = typeof id === 'string' ? ObjectId.createFromHexString(id) : id;
     return await patientCollection.findOne({ _id: _id });
   } catch (error) {
@@ -73,7 +85,7 @@ async function updatePatient(patientUpdate) {
     if (!ObjectId.isValid(patientUpdate._id)) {
       throw new Error('Invalid ObjectId provided : ' + patientUpdate._id);
     }
-    const db = getDb();
+    await init();
     const id = patientUpdate._id;
     delete patientUpdate._id;
     result = await patientCollection.updateOne(
@@ -93,7 +105,7 @@ async function deletePatient(id) {
     if (!ObjectId.isValid(id)) {
       throw new Error('Invalid ObjectId provided : ' + id);
     }
-
+    await init();
     await patientCollection.deleteOne({ _id: ObjectId.createFromHexString(id) });
   } catch (error) {
     throw wrapAppError(error, Layer.REPOSITORY, deletePatient.name, 'Failed to delete patient');
@@ -102,6 +114,7 @@ async function deletePatient(id) {
 
 async function getTotalCount(query) {
   try {
+    await init();
     return await patientCollection.countDocuments(query);
   } catch (error) {
     throw wrapAppError(error, Layer.REPOSITORY, getTotalCount.name, 'Failed to get total patient count');

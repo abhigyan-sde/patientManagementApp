@@ -4,11 +4,22 @@ const { wrapAppError } = require('../shared/errorHandler');
 const { Layer } = require('../shared/constants');
 
 tableName = 'appointments';
-const db = getDb();
-const appointmentCollection = db.collection(tableName);
+let appointmentCollection;
+
+async function init() {
+  try{
+    if (!appointmentCollection) {
+    const db = await getDb();
+    appointmentCollection = db.collection(tableName);
+  }
+  }catch(error){
+    throw wrapAppError(error, Layer.REPOSITORY, init.name, 'Failed to intitialize DB');
+  }
+}
 
 async function createAppointment(appointment) {
     try {
+        await init();
         const result = await appointmentCollection.insertOne(appointment);
         return result.insertedId;
     } catch (error) {
@@ -18,6 +29,7 @@ async function createAppointment(appointment) {
 
 async function updateAppointment(apptUpdate) {
     try {
+        await init();
         const{ _id, ...updateData} = apptUpdate;
         await appointmentCollection.updateOne(
             { _id: ObjectId.createFromHexString(_id) },
@@ -30,6 +42,7 @@ async function updateAppointment(apptUpdate) {
 
 async function deleteAppointment(appointmentId) {
     try {
+        await init();
         const _id = typeof appointmentId === 'string' ? ObjectId.createFromHexString(appointmentId) : appointmentId;
         const result = await appointmentCollection.deleteOne({ _id: _id });
     } catch (error) {
@@ -39,6 +52,7 @@ async function deleteAppointment(appointmentId) {
 
 async function getAppointmentForUser(patientId) {
     try {
+        await init();
         const result = await appointmentCollection
             .find({ patientId })
             .toArray();
@@ -56,6 +70,7 @@ async function getAppointmentForUser(patientId) {
 
 async function getApppointmentsByDate(apptDate) {
     try {
+        await init();
         const sortFields = { startTime: 1 };
         const result = await appointmentCollection.find({ appointmentDate: apptDate }).sort(sortFields).toArray();
         const sanitized = result.map(appt => ({
