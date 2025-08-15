@@ -2,22 +2,70 @@
   "name": "patient-management",
   "version": "1.0.0",
   "main": "main.js",
-  "scripts": {
-    "build:electron-shared": "tsc -p tsconfig.electron.json",
-    "start:electron": "npm run build:electron-shared && electron .",
-    "start:angular": "cd angular-ui && ng serve",
-    "start": "concurrently \"npm run start:electron\" \"npm run start:angular\""
-  },
-  "keywords": [],
+  "description": "Patient Management Desktop App",
   "author": "Abhigyan@Sinha",
   "license": "ISC",
-  "description": "",
+  "scripts": {
+    "build:electron-shared": "tsc -p tsconfig.electron.json",
+    "build:angular": "cd angular-ui && ng build --configuration production",
+    "start:electron": "npm run build:electron-shared && electron .",
+    "start:angular": "cd angular-ui && ng serve",
+    "start": "concurrently \"npm run start:electron\" \"npm run start:angular\"",
+    "dist": "npm run build:angular && npm run build:electron-shared && electron-builder"
+  },
+  "keywords": [],
   "devDependencies": {
     "concurrently": "^9.1.2",
     "electron": "^36.4.0",
+    "electron-builder": "^26.0.12",
     "typescript": "^5.8.3"
   },
   "dependencies": {
-    "mongodb": "^6.17.0"
+    "mongodb": "^6.17.0",
+    "tar": "^6.2.1",
+    "adm-zip": "^0.5.11"
+  },
+  "build": {
+    "appId": "com.asinha.patient.management",
+    "productName": "Patient Management",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "dist-electron/**/*",
+      "main.js",
+      "handlers/**/*",
+      "preLoadScripts/**/*",
+      "repository/**/*",
+      "shared/**/*",
+      "build/postInstall.js",
+      "node_modules/**/*"
+    ],
+    "extraResources": [
+      {
+        "from": "resources/",
+        "to": "resources",
+        "filter": ["**/*"]
+      },
+      {
+        "from": "dist/angular-ui-build",
+        "to": "angular-ui-build"
+      }
+    ],
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "include": "build/installer.nsh"
+    },
+    "mac": {
+      "category": "public.app-category.productivity",
+      "target": ["dmg", "zip"]
+    },
+    "linux": {
+      "target": ["AppImage", "deb"],
+      "category": "Utility"
+    }
   }
 }
