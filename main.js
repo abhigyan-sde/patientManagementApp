@@ -3,6 +3,7 @@ const path = require('path');
 const fs = require('fs');
 const { spawn } = require('child_process');
 const http = require('http');
+const { autoUpdater } = require('electron-updater');
 
 let mongoProcess;
 let config;
@@ -128,6 +129,89 @@ async function createWindow() {
   Menu.setApplicationMenu(menu);
 }
 
+// ------------------------------
+// Get Github URL
+// ------------------------------
+function getRepoURL() {
+  const packageJson = require(path.join(__dirname, 'package.json'));
+  let githubOwner, githubRepo;
+
+  if (packageJson.publish && packageJson.publish[0]) {
+    githubOwner = packageJson.publish[0].owner;
+    githubRepo = packageJson.publish[0].repo;
+  } else {
+    console.warn("⚠️ No GitHub publish config found in package.json. Falling back to defaults.");
+    githubOwner = "abhigyan-sde";
+    githubRepo = "patientManagementApp";
+  }
+  const githubReleasesUrl = `https://github.com/${githubOwner}/${githubRepo}/releases/latest`;
+  return githubReleasesUrl;
+}
+
+// ------------------------------
+// Auto Updater Setup
+// ------------------------------
+function setupAutoUpdater() {
+  if (isDev) 
+    return; // skip in dev
+
+  autoUpdater.autoDownload = false; // manual control
+
+  autoUpdater.on('update-available', (info) => {
+    console.log('⬇️ Update available:', info);
+
+    if (process.platform === 'darwin') {
+      // macOS unsigned → only notify + redirect
+      dialog.showMessageBox({
+        type: 'info',
+        title: 'Update Available',
+        message: `A new version (${info.version}) is available.`,
+        detail: 'Please download and install it manually.',
+        buttons: ['Download', 'Later']
+      }).then(result => {
+        if (result.response === 0) {
+          require('electron').shell.openExternal(getRepoURL());
+        }
+      });
+    } else {
+      // Windows/Linux → proceed with auto-update
+      dialog.showMessageBox({
+        type: 'info',
+        title: 'Update Available',
+        message: `A new version (${info.version}) is available. Download now?`,
+        buttons: ['Yes', 'Later']
+      }).then(result => {
+        if (result.response === 0) {
+          autoUpdater.downloadUpdate();
+        }
+      });
+    }
+  });
+
+  autoUpdater.on('update-downloaded', () => {
+    console.log('✅ Update downloaded');
+
+    if (process.platform !== 'darwin') {
+      dialog.showMessageBox({
+        type: 'info',
+        title: 'Update Ready',
+        message: 'Update downloaded. Restart now to install?',
+        buttons: ['Restart', 'Later']
+      }).then(result => {
+        if (result.response === 0) {
+          autoUpdater.quitAndInstall();
+        }
+      });
+    }
+  });
+
+  autoUpdater.on('error', (err) => {
+    console.error('❌ Update error:', err);
+  });
+
+  // Trigger check on startup
+  setTimeout(() => autoUpdater.checkForUpdates(), 3000);
+}
 
 // -------------------------------
 // App Ready
@@ -147,7 +231,8 @@ app.whenReady().then(async () => {
         config = await setupApp(installDir);
       } else {
         const configPath = path.join(app.getPath('userData'), 'config.json');
-        if (!fs.existsSync(configPath)) throw new Error('config.json not found.');
+        if(!fs.existsSync(configPath)) 
+          throw new Error('config.json not found.');
         config = JSON.parse(fs.readFileSync(configPath));
       }
       console.log('📂 Config loaded:', config);
@@ -160,6 +245,8 @@ app.whenReady().then(async () => {
     require('./handlers/appointmentHandler')();
 
     await createWindow();
+    // 🔑 Start auto-updater AFTER window is ready
+    setupAutoUpdater();
   } catch (err) {
     console.error('❌ Failed to start app:', err);
     dialog.showErrorBox('Startup Error', `Failed to start app: ${err.message}`);
