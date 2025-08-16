@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "main.js",
   "description": "Patient Management Desktop App",
-  "author": "Abhigyan@Sinha",
+  "author": "Abhigyan Sinha abhigyansinha2014@gmail.com",
   "license": "ISC",
   "scripts": {
     "build:electron-shared": "tsc -p tsconfig.electron.json",
@@ -21,9 +21,10 @@
     "typescript": "^5.8.3"
   },
   "dependencies": {
+    "adm-zip": "^0.5.11",
+    "electron-updater": "^6.6.2",
     "mongodb": "^6.17.0",
-    "tar": "^6.2.1",
-    "adm-zip": "^0.5.11"
+    "tar": "^6.2.1"
   },
   "build": {
     "appId": "com.asinha.patient.management",
@@ -31,6 +32,13 @@
     "directories": {
       "output": "dist"
     },
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "abhigyan-sde",
+        "repo": "patientManagementApp"
+      }
+    ],
     "files": [
       "dist-electron/**/*",
       "main.js",
@@ -61,10 +69,10 @@
     },
     "mac": {
       "category": "public.app-category.productivity",
-      "target": ["dmg", "zip"]
+      "target": ["dmg","zip"]
     },
     "linux": {
-      "target": ["AppImage", "deb"],
+      "target": ["AppImage","deb"],
       "category": "Utility"
     }
   }
