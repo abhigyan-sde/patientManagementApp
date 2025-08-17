@@ -1,6 +1,5 @@
 # Electron build output
 /dist
-/build
 /out
 /release
 /tmp
