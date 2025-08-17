@@ -4,6 +4,7 @@ const fs = require('fs');
 const { spawn } = require('child_process');
 const http = require('http');
 const { autoUpdater } = require('electron-updater');
+const { initLogger } = require('./logger/logger');
 
 let mongoProcess;
 let config;
@@ -237,13 +238,17 @@ app.whenReady().then(async () => {
       }
       console.log('📂 Config loaded:', config);
       startMongo();
+      const logPath = config.appLogsPath;
+      initLogger(logPath);
     }
 
     // Handlers (both dev and prod)
     require('./handlers/patientHandler')();
     require('./handlers/fileHandler')();
     require('./handlers/appointmentHandler')();
-
+    require('./handlers/loggerHandler')();
+    
+    //Create window
     await createWindow();
     // 🔑 Start auto-updater AFTER window is ready
     setupAutoUpdater();

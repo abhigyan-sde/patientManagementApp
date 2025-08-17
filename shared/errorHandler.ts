@@ -1,4 +1,5 @@
 import { Layer} from "./constants";
+import {logAppError } from "../logger/logger"
 
 export interface AppError {
   layer: 'REPOSITORY' | 'HANDLER' | 'SERVICE' | 'UI';
@@ -18,11 +19,14 @@ export function wrapAppError(
 ): AppError {
   if (error?.layer) return error; // already wrapped
 
-  return {
+  const appError = {
     layer,
     location,
     message,
     timestamp: new Date().toISOString(),
     originalError: error
   };
+
+  logAppError(appError);
+  return appError;
 }
