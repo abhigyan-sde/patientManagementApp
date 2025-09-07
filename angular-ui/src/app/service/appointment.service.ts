@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
-import { electron } from '../shared/electron';
+import { electron } from '../shared/utils/electron';
 import { AppointmentEntity } from '../entity/appointment';
-import { wrapAppError } from '../../../../shared/errorHandler';
-import { Layer } from '../../../../shared/constants';
-import { getFunctionName } from '../../../../shared/util'
+import { wrapAppError } from '../shared/error/errorHandler';
+import { getFunctionName } from '../shared/utils/helper';
+import { Layer } from '../shared/types/app-error';
+
 @Injectable({
   providedIn: 'root'
 })

@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import {environment } from '../../environments/environment';
-import { electron } from '../shared/electron';
+import { electron } from '../shared/utils/electron';
 
 @Injectable({providedIn : 'root'})
 export class LoggerService{

@@ -1,8 +1,8 @@
 const appointmentRepo = require('../repository/appointmentRepository');
 const { ipcMain } = require('electron');
-const { Layer } = require('../shared/constants');
-const { getFunctionName } = require('../shared/util');
-const {wrapAppError} = require('../shared/errorHandler');
+const { Layer } = require('../shared/types/layer');
+const { getFunctionName } = require('../shared/utils/helper');
+const {wrapAppError} = require('../shared/error/errorHandler');
 
 module.exports = function setUpAppointmentHandlers() {
   ipcMain.handle('add-appointment', async (event, appointment) => {

@@ -10,6 +10,9 @@ import { MatInputModule } from '@angular/material/input';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatButtonModule } from '@angular/material/button';
+import { wrapAppError } from '../../shared/error/errorHandler';
+import { Layer } from '../../shared/types/app-error';
+import { getFunctionName } from '../../shared/utils/helper';
 
 @Component({
   selector: 'app-add-patient',
@@ -81,7 +84,9 @@ export class AddPatient {
         this.notification.showSuccess('Patient added successful');
         this.router.navigate([`/patient/${patientId}`]);
       } catch (err : any) {
-        this.notification.showError('Failed to save patient, error msg : ' + err.message + '| detailed error - ' + err.originalError);
+        const errMsg = 'Failed to save patient, error msg : ' + err.message;
+        this.notification.showError(errMsg);
+        throw wrapAppError(err, Layer.UI, getFunctionName(), errMsg)
       }
     } else {
       this.patientForm.markAllAsTouched();

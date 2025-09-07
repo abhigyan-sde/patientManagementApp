@@ -3,6 +3,7 @@ import { MatDialog } from "@angular/material/dialog";
 import { CalendarEvent } from "angular-calendar";
 import { format } from "date-fns";
 import { AppointmentDialog } from "../../view/appointment/appointment-dialog/appointment-dialog";
+import { firstValueFrom } from 'rxjs';
 
 
 export interface AppointmentDialogInput {
@@ -19,6 +20,8 @@ export interface AppointmentDialogResult {
     date: Date;
     startTime: string;
     endTime: string;
+    status: boolean;
+    message: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -48,6 +51,6 @@ export class AppointmentModal {
             data: dialogData
         });
 
-        return dialogRef.afterClosed().toPromise();
+        return firstValueFrom(dialogRef.afterClosed());
     }
 }

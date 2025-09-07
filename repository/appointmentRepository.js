@@ -1,7 +1,7 @@
 const { getDb } = require('./mongoService');
 const { ObjectId } = require('mongodb');
-const { wrapAppError } = require('../shared/errorHandler');
-const { Layer } = require('../shared/constants');
+const { wrapAppError } = require('../shared/error/errorHandler');
+const Layer  = require('../shared/types/layer');
 
 tableName = 'appointments';
 let appointmentCollection;
@@ -44,7 +44,6 @@ async function deleteAppointment(appointmentId) {
     try {
         await init();
         const _id = typeof appointmentId === 'string' ? ObjectId.createFromHexString(appointmentId) : appointmentId;
-        const result = await appointmentCollection.deleteOne({ _id: _id });
     } catch (error) {
         throw wrapAppError(error, Layer.REPOSITORY, deleteAppointment.name, 'Failed to delete Appointment');
     }

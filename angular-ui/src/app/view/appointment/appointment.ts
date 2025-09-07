@@ -11,6 +11,7 @@ import { MatInputModule } from '@angular/material/input';
 import { AppointmentService } from '../../service/appointment.service';
 import { AppointmentEntity } from '../../entity/appointment';
 import { AppointmentModal } from '../../shared/dialogs/appointment-dialog-modal';
+import { NotificationService } from '../../service/notification.service';
 
 @Component({
   selector: 'app-appointment',
@@ -27,7 +28,9 @@ export class Appointment implements OnInit {
   timeSlots: string[] = [];
 
   constructor(private router: Router, private dialog: MatDialog,
-    private appointmentService: AppointmentService, private appointmentModal: AppointmentModal
+    private appointmentService: AppointmentService,
+     private appointmentModal: AppointmentModal,
+     private notificationService : NotificationService
   ) { }
 
   view: CalendarView = CalendarView.Day;
@@ -120,10 +123,14 @@ export class Appointment implements OnInit {
   openDialog(isEdit: boolean, date: Date, event?: CalendarEvent): void {
 
     this.appointmentModal.openAppointmentDialog({ isEdit, date, event }).then(result => {
-      if (!result || !result.action)
+      if (!result)
         return;
+      
+      const { action, date, startTime, endTime, patientId, description, _id, status, message } = result;
 
-      const { action, date, startTime, endTime, patientId, description, _id } = result;
+      if(!result.status){
+        this.notificationService.showError(result.message);
+      }
 
       if (action === 'delete') {
         this.events = this.events.filter(e => e.meta._id !== _id);

@@ -1,6 +1,6 @@
 import { Component, Renderer2, NgZone, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { electron } from './shared/electron';
+import { electron } from './shared/utils/electron';
 import { IpcRendererEvent } from 'electron';
 
 @Component({

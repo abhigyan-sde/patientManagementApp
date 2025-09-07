@@ -1,5 +1,5 @@
-const { Layer } = require('../shared/constants');
-const { wrapAppError } = require('../shared/errorHandler');
+const Layer  = require('../shared/types/layer');
+const { wrapAppError } = require('../shared/error/errorHandler');
 const { getDb } = require('./mongoService');
 const { ObjectId } = require('mongodb');
 

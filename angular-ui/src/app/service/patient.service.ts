@@ -1,9 +1,9 @@
-import { electron } from '../shared/electron';
+import { electron } from '../shared/utils/electron';
 import { Injectable } from '@angular/core';
 import { Patient } from '../entity/patient';
-import { wrapAppError } from '../../../../shared/errorHandler';
-import { Layer } from '../../../../shared/constants';
-import { getFunctionName } from '../../../../shared/util';
+import { wrapAppError } from '../shared/error/errorHandler';
+import { Layer } from '../shared/types/app-error';
+import { getFunctionName } from '../shared/utils/helper';
 
 @Injectable({ providedIn: 'root' })
 export class PatientService {

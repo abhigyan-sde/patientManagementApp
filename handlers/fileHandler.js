@@ -1,9 +1,9 @@
 const { ipcMain, app } = require('electron');
 const fs = require('fs/promises');
 const path = require('path');
-const { Layer } = require('../shared/constants');
-const { getFunctionName } = require('../shared/util');
-const { wrapAppError } = require('../shared/errorHandler');
+const { Layer } = require('../shared/types/layer');
+const { getFunctionName } = require('../shared/utils/helper');
+const { wrapAppError } = require('../shared/error/errorHandler');
 
 let workspacePath = path.join(app.getPath('userData'), 'prescriptions');
 

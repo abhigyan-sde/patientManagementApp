@@ -82,10 +82,16 @@ async function createWindow() {
 
   try {
     if (isDev) {
-      // Dev mode: Angular dev server
       await waitForAngularServer('http://localhost:4200');
-      win.loadURL('http://localhost:4200');
-      win.webContents.openDevTools();
+      console.log('👉 Angular server ready, loading in Electron');
+      if (!win.isDestroyed()) {
+        win.loadURL('http://localhost:4200').then(() => {
+          console.log('✅ Angular UI loaded into Electron window');
+        }).catch(err => {
+          console.error('❌ Failed to load Angular UI:', err);
+        });
+        win.webContents.openDevTools();
+      }
     } else {
       // Production / packaged mode
       const possiblePaths = [
@@ -122,7 +128,10 @@ async function createWindow() {
           label: 'Toggle Dark Mode',
           type: 'checkbox',
           checked: false,
-          click: (menuItem) => win.webContents.send('toggle-dark-mode', menuItem.checked)
+          click: (menuItem) => {
+            if (win && !win.isDestroyed())
+              win.webContents.send('toggle-dark-mode', menuItem.checked)
+          }
         }
       ]
     }
@@ -153,7 +162,7 @@ function getRepoURL() {
 // Auto Updater Setup
 // ------------------------------
 function setupAutoUpdater() {
-  if (isDev) 
+  if (isDev)
     return; // skip in dev
 
   autoUpdater.autoDownload = false; // manual control
@@ -232,7 +241,7 @@ app.whenReady().then(async () => {
         config = await setupApp(installDir);
       } else {
         const configPath = path.join(app.getPath('userData'), 'config.json');
-        if(!fs.existsSync(configPath)) 
+        if (!fs.existsSync(configPath))
           throw new Error('config.json not found.');
         config = JSON.parse(fs.readFileSync(configPath));
       }
@@ -247,7 +256,7 @@ app.whenReady().then(async () => {
     require('./handlers/fileHandler')();
     require('./handlers/appointmentHandler')();
     require('./handlers/loggerHandler')();
-    
+
     //Create window
     await createWindow();
     // 🔑 Start auto-updater AFTER window is ready

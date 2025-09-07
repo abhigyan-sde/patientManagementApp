@@ -6,12 +6,11 @@
   "author": "Abhigyan Sinha abhigyansinha2014@gmail.com",
   "license": "ISC",
   "scripts": {
-    "build:electron-shared": "tsc -p tsconfig.electron.json",
     "build:angular": "cd angular-ui && ng build --configuration production",
-    "start:electron": "npm run build:electron-shared && electron .",
+    "start:electron": "electron .",
     "start:angular": "cd angular-ui && ng serve",
     "start": "concurrently \"npm run start:electron\" \"npm run start:angular\"",
-    "dist": "npm run build:angular && npm run build:electron-shared && electron-builder --publish always"
+    "dist": "npm run build:angular && electron-builder --publish always"
   },
   "keywords": [],
   "devDependencies": {

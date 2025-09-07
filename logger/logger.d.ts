@@ -1,3 +1,5 @@
+import { AppError } from "../shared/error/errorHandler";
+
 export function initLogger(appLogsPath: string): any;
 export function setContext(extra: Record<string, any>): void;
 export function info(message: string, meta?: any): void;

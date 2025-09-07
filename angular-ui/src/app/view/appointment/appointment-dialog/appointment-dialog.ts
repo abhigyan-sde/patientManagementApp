@@ -16,7 +16,6 @@ import { MatSelectModule } from '@angular/material/select';
 import { ConfirmDialog } from '../../../shared/dialogs/confirm-dialog/confirm-dialog';
 import { generateTimeSlots, getAvailableTimeSlots } from '../../../shared/utils/calendarUtils';
 
-
 @Component({
   selector: 'app-appointment-dialog',
   standalone: true,
@@ -242,17 +241,18 @@ export class AppointmentDialog implements OnInit {
           startTime,
           endTime,
           patientId,
-          description
+          description,
+          status: true
         });
       } catch (err) {
-        console.error('Error saving appointment:', err);
-        this.dialogRef.close(false);
+        const msg = 'Error saving appointment : ' + err;
+        this.dialogRef.close({status : false, message : msg});
       }
     }
   }
 
   cancel(): void {
-    this.dialogRef.close(null);
+    this.dialogRef.close(false);
   }
 
   delete(): void {
@@ -267,10 +267,10 @@ export class AppointmentDialog implements OnInit {
     confirmDelete.afterClosed().subscribe(confirmed => {
       if (confirmed && this.data?._id) {
         this.appointmentService.deleteAppointment(this.data._id).then(() => {
-          this.dialogRef.close({ action: 'delete', _id: this.data._id });
+          this.dialogRef.close({ action: 'delete', _id: this.data._id, status: true });
         }).catch(error => {
-          console.error('Error deleting appointment : ' + error);
-          this.dialogRef.close(false);
+          const msg = 'Error deleting appointment : ' + error;
+          this.dialogRef.close({status : false, message : msg});
         });
       }
     })
