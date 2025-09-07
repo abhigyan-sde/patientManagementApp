@@ -19,7 +19,6 @@ export class AppointmentService {
     }catch(error){
       throw wrapAppError(error, Layer.SERVICE, getFunctionName(), 'Failed to retrieve Appointments for current patient.');
     }
-    
   }
 
   async addAppointment(appointment: AppointmentEntity): Promise<string> {
@@ -29,7 +28,6 @@ export class AppointmentService {
     }catch(error){
       throw wrapAppError(error, Layer.SERVICE, getFunctionName(), 'Failed to create Appointment');
     }
-    
   }
 
   async updateAppointment(appointment: AppointmentEntity): Promise<void> {
@@ -38,7 +36,6 @@ export class AppointmentService {
     }catch(error){
       throw wrapAppError(error, Layer.SERVICE, getFunctionName(), 'Failed to update Appointment');
     }
-   
   }
 
   async deleteAppointment(appointmentId: string): Promise<void> {
@@ -47,7 +44,6 @@ export class AppointmentService {
     }catch(error){
       throw wrapAppError(error, Layer.SERVICE, getFunctionName(), 'Failed to delete Appointment');
     }
-    
   }
 
   async getAppointmentsByDate(appointmentDate: string): Promise<AppointmentEntity[]>{
@@ -56,6 +52,5 @@ export class AppointmentService {
     }catch(error){
       throw wrapAppError(error, Layer.SERVICE, getFunctionName(), 'Failed to get appointments by date');
     }
-    
   }
 }
