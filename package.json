@@ -10,7 +10,7 @@
     "start:electron": "electron .",
     "start:angular": "cd angular-ui && ng serve",
     "start": "concurrently \"npm run start:electron\" \"npm run start:angular\"",
-    "dist": "npm run build:angular && electron-builder --publish always"
+    "dist": "npm run build:angular && electron-builder"
   },
   "keywords": [],
   "devDependencies": {
@@ -46,7 +46,8 @@
       "repository/**/*",
       "shared/**/*",
       "build/postInstall.js",
-      "node_modules/**/*"
+      "node_modules/**/*",
+      "logger/**/*"
     ],
     "extraResources": [
       {
@@ -68,7 +69,8 @@
     },
     "mac": {
       "category": "public.app-category.productivity",
-      "target": ["dmg","zip"]
+      "target": ["dmg","zip"],
+      "publish": null
     },
     "linux": {
       "target": ["AppImage","deb"],

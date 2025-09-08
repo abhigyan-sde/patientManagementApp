@@ -3,11 +3,11 @@ const path = require('path');
 const fs = require('fs');
 const { spawn } = require('child_process');
 const http = require('http');
-const { autoUpdater } = require('electron-updater');
-const { initLogger } = require('./logger/logger');
+const { initLogger, logAppError } = require('./logger/logger');
 
 let mongoProcess;
 let config;
+let autoUpdater = null;
 
 // Auto-detect environment
 const isDev = !app.isPackaged;
@@ -162,28 +162,52 @@ function getRepoURL() {
 // Auto Updater Setup
 // ------------------------------
 function setupAutoUpdater() {
-  if (isDev)
-    return; // skip in dev
+  if (isDev) return; // skip in dev
 
-  autoUpdater.autoDownload = false; // manual control
+  // ------------------------------
+  // Skip auto-update entirely for macOS
+  // ------------------------------
+  if (process.platform === 'darwin') {
+    console.log('ℹ️ macOS detected → skipping auto-updater.');
 
-  autoUpdater.on('update-available', (info) => {
-    console.log('⬇️ Update available:', info);
+    // Stub for safety (prevents accidental calls)
+    autoUpdater = {
+      checkForUpdates: () => { },
+      checkForUpdatesAndNotify: () => { },
+      on: () => { },
+      quitAndInstall: () => { }
+    };
 
-    if (process.platform === 'darwin') {
-      // macOS unsigned → only notify + redirect
+    setTimeout(() => {
       dialog.showMessageBox({
         type: 'info',
-        title: 'Update Available',
-        message: `A new version (${info.version}) is available.`,
-        detail: 'Please download and install it manually.',
-        buttons: ['Download', 'Later']
+        title: 'Update Check',
+        message: 'Check for updates',
+        detail: 'On macOS this app is unsigned. Please visit the GitHub releases page to download updates manually.',
+        buttons: ['Go to Releases', 'Later']
       }).then(result => {
         if (result.response === 0) {
           require('electron').shell.openExternal(getRepoURL());
         }
       });
-    } else {
+    }, 3000);
+
+    return;
+  }
+  try {
+    const { autoUpdater: updater } = require('electron-updater');
+    autoUpdater = updater;
+  } catch (err) {
+    console.warn('⚠️ Failed to load autoUpdater:', err);
+    return;
+  }
+
+  try {
+    autoUpdater.autoDownload = false; // manual control
+
+    autoUpdater.on('update-available', (info) => {
+      console.log('⬇️ Update available:', info);
+
       // Windows/Linux → proceed with auto-update
       dialog.showMessageBox({
         type: 'info',
@@ -195,13 +219,10 @@ function setupAutoUpdater() {
           autoUpdater.downloadUpdate();
         }
       });
-    }
-  });
+    });
 
-  autoUpdater.on('update-downloaded', () => {
-    console.log('✅ Update downloaded');
-
-    if (process.platform !== 'darwin') {
+    autoUpdater.on('update-downloaded', () => {
+      console.log('✅ Update downloaded');
       dialog.showMessageBox({
         type: 'info',
         title: 'Update Ready',
@@ -212,15 +233,21 @@ function setupAutoUpdater() {
           autoUpdater.quitAndInstall();
         }
       });
+    });
+
+    autoUpdater.on('error', (err) => {
+      console.error('❌ Auto-updater error:', err);
+    });
+
+    // Trigger check on startup
+    setTimeout(() => autoUpdater.checkForUpdates(), 3000);
+
+  } catch (err) {
+    console.warn('⚠️ Auto-updater initialization failed:', err);
+    if (typeof logAppError === 'function') {
+      logAppError({ message: 'Error in auto updater', err });
     }
-  });
-
-  autoUpdater.on('error', (err) => {
-    console.error('❌ Update error:', err);
-  });
-
-  // Trigger check on startup
-  setTimeout(() => autoUpdater.checkForUpdates(), 3000);
+  }
 }
 
 // -------------------------------
